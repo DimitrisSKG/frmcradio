@@ -14,7 +14,7 @@ async def play_audio(vc):
         if not vc.is_playing() and vc.is_connected():
             options = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
             source = discord.FFmpegPCMAudio(MP3_URL, **options)
-            transformed = discord.PCMVolumeTransformer(source, volume=0.5)
+            transformed = discord.PCMVolumeTransformer(source, volume=0.02)
             vc.play(transformed)
         await asyncio.sleep(10)
 
