@@ -60,4 +60,10 @@ async def on_voice_state_update(member, before, after):
         if before.channel is not None and after.channel is None:
             log_event(f"ΑΠΟΣΥΝΔΕΣΗ: Το bot βγήκε από το κανάλι '{before.channel.name}'.")
 
-bot.run(TOKEN)
+# Αντικατάστησε το bot.run(TOKEN) με αυτό:
+while True:
+    try:
+        bot.run(TOKEN)
+    except Exception as e:
+        log_event(f"Το bot σταμάτησε αναπάντεχα: {e}. Επανακίνηση σε 10 δευτερόλεπτα...")
+        asyncio.run(asyncio.sleep(10))
