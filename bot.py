@@ -17,7 +17,6 @@ intents.voice_states = True
 intents.message_content = True # Απαραίτητο για να διαβάζει εντολές
 intents = discord.Intents.default()
 
-
 bot = discord.Client(intents=intents)
 
 def log_event(message):
@@ -51,6 +50,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     # Μην απαντάς στον εαυτό σου
+    print(f"Λήφθηκε μήνυμα: {message.content}") # Αυτό θα εμφανιστεί στα logs του GitHub
     if message.author == bot.user:
         return
 
