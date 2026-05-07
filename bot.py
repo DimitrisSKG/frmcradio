@@ -1,16 +1,22 @@
 import discord
 import os
 import asyncio
+import requests
 from datetime import datetime
 
+# Ρυθμίσεις
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
-# Εδώ γράφεις το όνομα του αρχείου που ανέβασες στο GitHub
-FILENAME = "music.mp3" 
+FILENAME = "music.mp3"
+GH_TOKEN = os.getenv('GH_TOKEN') # Το νέο secret
+REPO = "DimitrisSKG/frmcradio" # Το όνομα του repo σου
 
 intents = discord.Intents.default()
 intents.guilds = True
 intents.voice_states = True
+intents.message_content = True # Απαραίτητο για να διαβάζει εντολές
+intents = discord.Intents.default()
+
 
 bot = discord.Client(intents=intents)
 
@@ -22,7 +28,6 @@ async def play_audio(vc):
     while True:
         try:
             if vc.is_connected() and not vc.is_playing():
-                # Εδώ διαβάζει το τοπικό αρχείο
                 source = discord.FFmpegPCMAudio(FILENAME)
                 transformed = discord.PCMVolumeTransformer(source, volume=0.02)
                 vc.play(transformed)
@@ -42,5 +47,33 @@ async def on_ready():
             bot.loop.create_task(play_audio(vc))
         except Exception as e:
             log_event(f"ΑΠΟΤΥΧΙΑ ΣΥΝΔΕΣΗΣ: {e}")
+
+@bot.event
+async def on_message(message):
+    # Μην απαντάς στον εαυτό σου
+    if message.author == bot.user:
+        return
+
+    if message.content == "!restart":
+        if GH_TOKEN:
+            await message.channel.send("🔄 Γίνεται επανεκκίνηση του Workflow στο GitHub...")
+            
+            # Εντολή στο GitHub API να ξεκινήσει το workflow
+            url = f"https://api.github.com/repos/{REPO}/actions/workflows/main.yml/dispatches"
+            headers = {
+                "Authorization": f"token {GH_TOKEN}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            data = {"ref": "main"}
+            
+            response = requests.post(url, headers=headers, json=data)
+            
+            if response.status_code == 204:
+                log_event(f"Το workflow επανεκκινήθηκε από τον χρήστη {message.author}")
+                # Το GitHub Actions θα κλείσει αυτό το bot αυτόματα λόγω του concurrency group
+            else:
+                await message.channel.send(f"❌ Σφάλμα GitHub API: {response.status_code}")
+        else:
+            await message.channel.send("❌ Δεν έχει ρυθμιστεί το GH_TOKEN στα Secrets!")
 
 bot.run(TOKEN)

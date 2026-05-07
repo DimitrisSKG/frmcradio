@@ -32,6 +32,6 @@ jobs:
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
-          # Το MP3_URL δεν χρειάζεται πλέον αν το παίζεις τοπικά, αλλά ας το αφήσουμε για σιγουριά
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # Πρόσθεσε αυτή τη γραμμή
           MP3_URL: ${{ secrets.MP3_URL }} 
         run: python bot.py
