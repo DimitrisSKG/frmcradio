@@ -11,11 +11,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    # Αυτό σταματάει αμέσως το προηγούμενο bot αν ξεκινήσει νέο, αποφεύγοντας τα διπλότυπα
-    concurrency:
-      group: discord-bot
-      cancel-in-progress: true
-
+    # ΣΒΗΣΑΜΕ ΤΟ CONCURRENCY ΑΠΟ ΕΔΩ
     steps:
       - uses: actions/checkout@v3
 
@@ -35,5 +31,5 @@ jobs:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        # Προσθήκη timeout ώστε αν "κολλήσει" το GitHub, να τερματίζει μόνο του και να ξαναρχίζει το επόμενο
-        run: timeout 175m python bot.py || true
+        # Βάζουμε μικρότερο timeout (π.χ. 55 λεπτά) για να ανανεώνεται πιο συχνά και καθαρά
+        run: timeout 55m python bot.py || true
