@@ -4,14 +4,14 @@ on:
   push:
     branches: [ main ]
   schedule:
-    # Τρέχει κάθε 5 λεπτά! (Το GitHub μπορεί να το καθυστερήσει λίγο, αλλά είναι το πιο συχνό που επιτρέπεται)
-    - cron: '*/5 * * * *' 
+    - cron: '*/5 * * * *' # Έλεγχος κάθε 5 λεπτά
   workflow_dispatch:
 
 jobs:
   run:
     runs-on: ubuntu-latest
     # ΣΒΗΣΑΜΕ ΤΟ CONCURRENCY ΑΠΟ ΕΔΩ
+
     steps:
       - uses: actions/checkout@v3
 
@@ -32,4 +32,4 @@ jobs:
           CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         # Βάζουμε μικρότερο timeout (π.χ. 55 λεπτά) για να ανανεώνεται πιο συχνά και καθαρά
-        run: timeout 55m python bot.py
+        run: timeout 55m python bot.py || true
